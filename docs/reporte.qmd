@@ -1,0 +1,106 @@
+---
+title: "Pronostico de costos de garantias a corto plazo para HP Inc."
+author: Daniel Nuño
+date: 14/07/2022
+format:
+  pdf: 
+    # cite-method: biblatex
+    # toc: true # descomentar solo si se quiere tabla de contenidos
+    # documentclass: scrartcl # por defecto, KOMA-Script class
+                              # otras opciones: article, report
+    papersize: letter
+    number-sections: true
+    colorlinks: true
+bibliography: references.bib
+csl: apa.csl
+lang: es
+jupyter: python3
+fig-pos: 'h'
+---
+
+
+# Pronostico de costos de garantias a corto plazo para HP Inc.
+
+## Introducción
+Cada mes la organización de finanzas debe proveer un estimado de los gastos mensuales. Actualmente el proceso es intensivo en tiempo y en labor, dejando mucho que desear a la precisión.
+
+## Definición del problema o pregunta
+
+Mes con mes la organización de finanzas, en conjunto la organización de Customer Support, debe proveer un estimado de los gastos y costos por garantías ejercidas que tendrá en el corto plazo, entre tres y doce meses. La solución actual deja que desear en cuanto la precisión, además de ser muy demandante en tiempo y personal.
+
+El objetivo es crear una solución que pueda proveer una precisión, al menos, igual a las soluciones actuales, pero sin la bruma, el trabajo y el tiempo que conlleva hacerlo mes con mes. Idealmente será completamente automática, supervisada, online, pero hay consideraciones que no están capturadas en los datos, como información de partes altamente defectuosas, problemas en la cadena de suministro o inversiones.
+
+Parte de la visión de HP Inc es la innovación digital e internamente transformar la forma en que trabajamos. El métrico principal de la solución es la precisión de la predicción evaluado mes con mes, el actual benchmark es la precisión de la solución actual. Adicional, métricos relevantes son (1) cuantos días de trabajo se puede reducir para la entrega de la predicción, y (2) cuantas horas de trabajo se reducen mes con mes.
+
+Los costos y gastos se reportan mes con mes y se componen de costos regionales, gastos globales, y reservas y amortizaciones. Los costos globales son en su mayoría fijos relacionados a empleados o inversiones. Las reservas y amortizaciones responden a ahorros hechos para cubrir los costos basado en las partes vendidas. Los costos regionales corresponden a costos fijos de empleados, pero también a gastos variables operativos como partes de repuesto, trabajo de ingenieros en la reparación, y llamadas de asistencia.
+
+
+Total Warranty Expense	 	 	 
+	Region Owned Expense	 	 
+		Variable Expense	 
+			Contact Center
+			Delivery
+			Supply Chain
+			Other Repair Cost
+		Repair OH Expense	 
+			Contact Center OH
+			Delivery OH
+			Supply Chain OH
+		Other Warranty Expense	 
+			Other Warranty Expense
+	Worldwide Owned and Allocated Expense	 	 
+		CS HQ Owned and Allocated
+			CS HQ
+			CS Investments
+		GBU Owned and Allocated	 
+			GBU Owned and Allocated
+	Net Reserve Expense	 	 
+		Unit Impacts	 
+			Accrual for Shipments
+			Amortization
+		Adjustment Impacts	 
+			Other Adjustment Impacts
+
+
+Para gastos de variables de contact center necesitamos saber tres cosas:
+	V = Cantidad de unidades vendidas en un periodo.
+	L = Porcentaje de productos con fallas o
+	V*L = cantidad de asistencias sin reparación.
+	C_llamada = costo promedio por llamada.
+
+$$
+cc variable = V*L*C_{llamada}
+$$
+
+Para gastos variables de reparación necesitamos saber tres cosas:
+	V = Cantidad de unidades vendidas para un periodo.
+	R = Porcentaje de unidades vendidas que necesiten reparación.
+	C_ reparación = El costo promedio de reparación.
+
+$$
+reparacion variable = V*R*C_{reparacion}
+$$
+
+Para los costos fijos o over head necesitamos saber dos cosas:
+	E = Cantidad de empleados.
+	C_empleado = Costo promedio por empleado.
+
+$$
+over head = E*C_{empleado}
+$$
+
+Otro de los requisitos es la granularidad en la geografía (mercado) y el tipo de producto (segmento), lo que agrega complejidad al proceso por que los costos de un segmento y mercado terminan siendo diferentes. Son 10 mercados y 5 segmentos.
+Las asunciones hasta ahora son:
+- Tiene tendencia.
+- Tiene estacionalidad.
+- Es autorregresivo.
+- Es un proceso estocástico porque hay costos no previstos.
+- Los números reportados no son perfectos por errores humanos.
+- Mas allá de analizar las series de tiempo, el pronóstico de cantidad de fallas y empleados es vital para una buena precisión.
+- Backlog de casos es un punto de partida importante cada mes.
+
+## Datos
+
+Los datos a útilizar son los costos mensuales de cada una de las variables que componen operativamente la organización de garantías. Estos costos al ser divididos por mercado y por segmento estamos hablando de multiples series de tiempo. En cuanto al rango, los datos disponibles son de Noviembre 2016 a Julio 2022. Los datos financieros son colectados del General Ledger. Datos operativos son recolectados de diferentes sistemas dependiendo de la región o el tipo de producto. Los datos son consolidados en una base de datos, por lo tanto no se les aplico mucho tratamiento más que etiquetado de datos.
+
+
